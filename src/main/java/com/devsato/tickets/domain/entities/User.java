@@ -1,4 +1,4 @@
-package com.devsato.tickets.domain;
+package com.devsato.tickets.domain.entities;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

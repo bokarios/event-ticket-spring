@@ -1,9 +1,10 @@
-package com.devsato.tickets.domain;
+package com.devsato.tickets.domain.entities;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -20,39 +21,43 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "tickets")
+@Table(name = "ticket_types")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Ticket {
-
+@Builder
+public class TicketType {
   @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
   @Column(name = "id", nullable = false, updatable = false)
-  private String id;
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
-  @Column(name = "status", nullable = false)
-  private TicketStatusEnum status;
+  @Column(name = "name", nullable = false)
+  private String name;
+
+  @Column(name = "price", nullable = false)
+  private Double price;
+
+  @Column(name = "description")
+  private String description;
+
+  @Column(name = "total_available")
+  private Integer totalAvailable;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "ticket_type_id")
-  private TicketType ticketType;
+  @JoinColumn(name = "event_id")
+  private Event event;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "purchaser_id")
-  private User purchaser;
-
-  @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL)
-  private List<TicketValidation> validations = new ArrayList<>();
-
-  @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL)
-  private List<QrCode> qrCodes = new ArrayList<>();
+  @OneToMany(mappedBy = "ticketType", cascade = CascadeType.ALL)
+  @Builder.Default
+  private List<Ticket> tickets = new ArrayList<>();
 
   @CreatedDate
   @Column(name = "created_at", updatable = false, nullable = false)
@@ -66,14 +71,15 @@ public class Ticket {
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass())
       return false;
-    Ticket ticket = (Ticket) o;
-    return Objects.equals(id, ticket.id) && status == ticket.status && Objects.equals(createdAt, ticket.createdAt)
-        && Objects.equals(updatedAt, ticket.updatedAt);
+    TicketType that = (TicketType) o;
+    return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(price, that.price)
+        && Objects.equals(totalAvailable, that.totalAvailable) && Objects.equals(createdAt, that.createdAt)
+        && Objects.equals(updatedAt, that.updatedAt);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, status, createdAt, updatedAt);
+    return Objects.hash(id, name, price, totalAvailable, createdAt, updatedAt);
   }
 
 }

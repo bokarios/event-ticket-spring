@@ -1,10 +1,9 @@
-package com.devsato.tickets.domain;
+package com.devsato.tickets.domain.entities;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -21,40 +20,39 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "ticket_types")
+@Table(name = "tickets")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class TicketType {
+public class Ticket {
+
   @Id
-  @Column(name = "id", nullable = false, updatable = false)
   @GeneratedValue(strategy = GenerationType.UUID)
-  private UUID id;
+  @Column(name = "id", nullable = false, updatable = false)
+  private String id;
 
-  @Column(name = "name", nullable = false)
-  private String name;
-
-  @Column(name = "price", nullable = false)
-  private Double price;
-
-  @Column(name = "total_available")
-  private Integer totalAvailable;
+  @Column(name = "status", nullable = false)
+  private TicketStatusEnum status;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "event_id")
-  private Event event;
+  @JoinColumn(name = "ticket_type_id")
+  private TicketType ticketType;
 
-  @OneToMany(mappedBy = "ticketType", cascade = CascadeType.ALL)
-  @Builder.Default
-  private List<Ticket> tickets = new ArrayList<>();
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "purchaser_id")
+  private User purchaser;
+
+  @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL)
+  private List<TicketValidation> validations = new ArrayList<>();
+
+  @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL)
+  private List<QrCode> qrCodes = new ArrayList<>();
 
   @CreatedDate
   @Column(name = "created_at", updatable = false, nullable = false)
@@ -68,15 +66,14 @@ public class TicketType {
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass())
       return false;
-    TicketType that = (TicketType) o;
-    return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(price, that.price)
-        && Objects.equals(totalAvailable, that.totalAvailable) && Objects.equals(createdAt, that.createdAt)
-        && Objects.equals(updatedAt, that.updatedAt);
+    Ticket ticket = (Ticket) o;
+    return Objects.equals(id, ticket.id) && status == ticket.status && Objects.equals(createdAt, ticket.createdAt)
+        && Objects.equals(updatedAt, ticket.updatedAt);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, price, totalAvailable, createdAt, updatedAt);
+    return Objects.hash(id, status, createdAt, updatedAt);
   }
 
 }
