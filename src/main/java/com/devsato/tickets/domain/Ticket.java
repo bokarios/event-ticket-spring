@@ -48,7 +48,7 @@ public class Ticket {
   @JoinColumn(name = "purchaser_id")
   private User purchaser;
 
-  @OneToMany(mappedBy = "tickets", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL)
   private List<TicketValidation> validations = new ArrayList<>();
 
   @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL)
