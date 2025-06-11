@@ -9,5 +9,4 @@ import com.devsato.tickets.domain.entities.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
-
 }
