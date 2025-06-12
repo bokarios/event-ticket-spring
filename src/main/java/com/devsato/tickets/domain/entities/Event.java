@@ -77,7 +77,7 @@ public class Event {
   @Builder.Default
   private List<User> staff = new ArrayList<>();
 
-  @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
   @Builder.Default
   private List<TicketType> ticketTypes = new ArrayList<>();
 
