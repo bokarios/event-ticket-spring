@@ -12,6 +12,8 @@ import com.devsato.tickets.domain.dtos.CreateEventResponseDto;
 import com.devsato.tickets.domain.dtos.CreateTicketTypeRequestDto;
 import com.devsato.tickets.domain.dtos.GetEventDetailsResponseDto;
 import com.devsato.tickets.domain.dtos.GetEventTicketTypesResponseDto;
+import com.devsato.tickets.domain.dtos.GetPublishedEventResponseDto;
+import com.devsato.tickets.domain.dtos.GetPublishedEventTicketTypesResponseDto;
 import com.devsato.tickets.domain.dtos.ListEventResponseDto;
 import com.devsato.tickets.domain.dtos.ListEventTicketTypeResponseDto;
 import com.devsato.tickets.domain.dtos.ListPublishedEventResponseDto;
@@ -47,4 +49,8 @@ public interface EventMapper {
   UpdateEventResponseDto toUpdateEventResponseDto(Event event);
 
   ListPublishedEventResponseDto toListPublishedEventResponseDto(Event event);
+
+  GetPublishedEventTicketTypesResponseDto toGetPublishedEventTicketTypesResponseDto(TicketType ticketType);
+
+  GetPublishedEventResponseDto tGetPublishedEventResponseDto(Event event);
 }
