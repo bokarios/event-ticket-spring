@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.devsato.tickets.domain.dtos.ErrorDto;
 import com.devsato.tickets.exceptions.EventNotFoundException;
 import com.devsato.tickets.exceptions.EventUpdateException;
+import com.devsato.tickets.exceptions.QrCodeGenerationException;
+import com.devsato.tickets.exceptions.QrCodeNotFoundException;
 import com.devsato.tickets.exceptions.TicketTypeNotFoundException;
+import com.devsato.tickets.exceptions.TicketsSoldOutException;
 import com.devsato.tickets.exceptions.UserNotFoundException;
 
 import jakarta.validation.ConstraintViolationException;
@@ -22,6 +25,30 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
+
+  @ExceptionHandler(TicketsSoldOutException.class)
+  public ResponseEntity<ErrorDto> handleTicketsSoldOutException(TicketsSoldOutException ex) {
+    log.error("Caught TicketsSoldOutException", ex);
+    ErrorDto errorDto = new ErrorDto();
+    errorDto.setError("Tickets are sold out for this ticket type");
+    return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(QrCodeNotFoundException.class)
+  public ResponseEntity<ErrorDto> handleQQrCodeNotFoundException(QrCodeNotFoundException ex) {
+    log.error("Caught QQrCodeNotFoundException", ex);
+    ErrorDto errorDto = new ErrorDto();
+    errorDto.setError("Qr Code not found");
+    return new ResponseEntity<>(errorDto, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  @ExceptionHandler(QrCodeGenerationException.class)
+  public ResponseEntity<ErrorDto> handleQrCodeGenerationException(QrCodeGenerationException ex) {
+    log.error("Caught QrCodeGenerationException", ex);
+    ErrorDto errorDto = new ErrorDto();
+    errorDto.setError("Unable to generate QR Code");
+    return new ResponseEntity<>(errorDto, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
 
   @ExceptionHandler(EventUpdateException.class)
   public ResponseEntity<ErrorDto> handleEventUpdateException(EventUpdateException ex) {
