@@ -11,6 +11,7 @@ import com.devsato.tickets.domain.entities.QrCode;
 import com.devsato.tickets.domain.entities.QrCodeStatusEnum;
 import com.devsato.tickets.domain.entities.Ticket;
 import com.devsato.tickets.exceptions.QrCodeGenerationException;
+import com.devsato.tickets.exceptions.QrCodeNotFoundException;
 import com.devsato.tickets.repositories.QrCodeRepository;
 import com.devsato.tickets.services.QrCodeService;
 import com.google.zxing.BarcodeFormat;
@@ -23,9 +24,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class QrCodeServiceImpl implements QrCodeService {
 
   private static final int QR_HEIGHT = 300;
@@ -65,6 +68,19 @@ public class QrCodeServiceImpl implements QrCodeService {
       ImageIO.write(qrCodeImage, "PNG", baos);
       byte[] imageBytes = baos.toByteArray();
       return Base64.getEncoder().encodeToString(imageBytes);
+    }
+  }
+
+  @Override
+  public byte[] getQrCodeForUserAndTicket(UUID userId, UUID ticketId) {
+    QrCode qrCode = qrCodeRepository.findByTicketIdAndTicketPurchaserId(ticketId, userId)
+        .orElseThrow(QrCodeNotFoundException::new);
+
+    try {
+      return Base64.getDecoder().decode(qrCode.getValue());
+    } catch (IllegalArgumentException e) {
+      log.error("Invalid QR Code for the ticket ID: {}", ticketId, e);
+      throw new QrCodeNotFoundException();
     }
   }
 
