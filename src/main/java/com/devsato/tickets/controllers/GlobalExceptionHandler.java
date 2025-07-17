@@ -15,6 +15,7 @@ import com.devsato.tickets.exceptions.EventNotFoundException;
 import com.devsato.tickets.exceptions.EventUpdateException;
 import com.devsato.tickets.exceptions.QrCodeGenerationException;
 import com.devsato.tickets.exceptions.QrCodeNotFoundException;
+import com.devsato.tickets.exceptions.TicketNotFoundException;
 import com.devsato.tickets.exceptions.TicketTypeNotFoundException;
 import com.devsato.tickets.exceptions.TicketsSoldOutException;
 import com.devsato.tickets.exceptions.UserNotFoundException;
@@ -55,6 +56,14 @@ public class GlobalExceptionHandler {
     log.error("Caught EventUpdateException", ex);
     ErrorDto errorDto = new ErrorDto();
     errorDto.setError("Unable to update event");
+    return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(TicketNotFoundException.class)
+  public ResponseEntity<ErrorDto> handleTicketNotFoundException(TicketNotFoundException ex) {
+    log.error("Caught TicketNotFoundException", ex);
+    ErrorDto errorDto = new ErrorDto();
+    errorDto.setError("Ticket not found");
     return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
   }
 
